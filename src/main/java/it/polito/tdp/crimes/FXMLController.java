@@ -5,7 +5,12 @@
 package it.polito.tdp.crimes;
 
 import java.net.URL;
+import java.time.LocalDate;
+import java.time.Month;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
+
+import org.jgrapht.graph.DefaultWeightedEdge;
 
 import it.polito.tdp.crimes.model.Model;
 import javafx.event.ActionEvent;
@@ -25,10 +30,10 @@ public class FXMLController {
     private URL location;
 
     @FXML // fx:id="boxCategoria"
-    private ComboBox<?> boxCategoria; // Value injected by FXMLLoader
+    private ComboBox<String> boxCategoria; // Value injected by FXMLLoader
 
     @FXML // fx:id="boxMese"
-    private ComboBox<?> boxMese; // Value injected by FXMLLoader
+    private ComboBox<Month> boxMese; // Value injected by FXMLLoader
 
     @FXML // fx:id="btnAnalisi"
     private Button btnAnalisi; // Value injected by FXMLLoader
@@ -49,6 +54,14 @@ public class FXMLController {
 
     @FXML
     void doCreaGrafo(ActionEvent event) {
+    	String categoria=this.boxCategoria.getValue();
+    	Month mese=this.boxMese.getValue();
+    	model.generaGrafo(categoria, mese);
+    	ArrayList<String> risultato= model.getCombinazioniSupMedia();
+    	for(String e: risultato) {
+    		this.txtResult.appendText(e+"\n");
+    	}
+    
 
     }
 
@@ -65,5 +78,9 @@ public class FXMLController {
     
     public void setModel(Model model) {
     	this.model = model;
+    	this.boxCategoria.getItems().addAll(model.getCategorie());
+    	for(LocalDate m: model.getMesi()) {
+    	this.boxMese.getItems().add(m.getMonth());
+    }
     }
 }
