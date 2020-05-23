@@ -158,7 +158,7 @@ public class EventsDao {
 			Connection conn = DBConnect.getConnection() ;
 			PreparedStatement st = conn.prepareStatement(sql) ;
 			st.setString(1, categoria);
-			st.setString(2, "%-0"+(month.getValue()+1)+"-%");
+			st.setString(2, "%-0"+(month.getValue())+"-%");
 			ArrayList<String> list = new ArrayList<String>() ;
 			
 			ResultSet res = st.executeQuery() ;
@@ -177,7 +177,13 @@ public class EventsDao {
 			return null ;
 		}
 	}
-
+/**
+ * numero di quartieri in cui si sono verificati entrambi i crimini
+ * @param primo quartiere1
+ * @param secondo quartiere2
+ * @param month mese indicato
+ * @return numero di quartieri per i parametri indicati, se l'arco non esiste, restituisce -1
+ */
 	public int getContatoreCrimini(String primo, String secondo, Month month) {
 		String sql = "SELECT DISTINCT e.offense_type_id, e2.offense_type_id, count(distinct e.neighborhood_id) AS valore \n " + 
 				"FROM `events` e, `events` e2 \n " + 
@@ -189,13 +195,15 @@ public class EventsDao {
 			Connection conn = DBConnect.getConnection() ;
 			PreparedStatement st = conn.prepareStatement(sql) ;
 			st.setString(1, primo);
-			st.setString(2, "%-0"+(month.getValue()+1)+"-%");
-			st.setString(3, "%-0"+(month.getValue()+1)+"-%");
+			st.setString(2, "%-0"+(month.getValue())+"-%");
+			st.setString(3, "%-0"+(month.getValue())+"-%");
 			st.setString(4, secondo);
-			
+			int risultato;
 			ResultSet res = st.executeQuery() ;
-			res.next();
-			int risultato=res.getInt("valore");
+			if(res.next())
+				risultato=res.getInt("valore");
+			else
+				risultato=-1;
 			conn.close();
 			return risultato ;
 

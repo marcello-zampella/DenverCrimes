@@ -8,8 +8,10 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.ResourceBundle;
 
+import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultWeightedEdge;
 
 import it.polito.tdp.crimes.model.Model;
@@ -39,7 +41,7 @@ public class FXMLController {
     private Button btnAnalisi; // Value injected by FXMLLoader
 
     @FXML // fx:id="boxArco"
-    private ComboBox<?> boxArco; // Value injected by FXMLLoader
+    private ComboBox<DefaultWeightedEdge> boxArco; // Value injected by FXMLLoader
 
     @FXML // fx:id="btnPercorso"
     private Button btnPercorso; // Value injected by FXMLLoader
@@ -49,19 +51,40 @@ public class FXMLController {
 
     @FXML
     void doCalcolaPercorso(ActionEvent event) {
+    	DefaultWeightedEdge arco= this.boxArco.getValue();
+    	if(arco==null) {
+    		this.txtResult.appendText("SELEZIONA!");
+    		return;
+    	}
+    	String partenza=grafo.getEdgeSource(arco);
+    	String arrivo=grafo.getEdgeTarget(arco);
+    	LinkedList<String> lista=model.getCamminoMassimo(partenza,arrivo);
+    	System.out.println(lista);
 
     }
+    Graph<String, DefaultWeightedEdge> grafo;
 
     @FXML
     void doCreaGrafo(ActionEvent event) {
+    	
     	String categoria=this.boxCategoria.getValue();
     	Month mese=this.boxMese.getValue();
-    	model.generaGrafo(categoria, mese);
-    	ArrayList<String> risultato= model.getCombinazioniSupMedia();
-    	for(String e: risultato) {
-    		this.txtResult.appendText(e+"\n");
+    	if(categoria==null || mese==null) {
+    		this.txtResult.setText("SELEZIONA!");
+    		return ;
     	}
-    
+    	model.generaGrafo(categoria, mese);
+    	ArrayList<DefaultWeightedEdge> risultato= model.getCombinazioniSupMedia();
+    	if(risultato.isEmpty()) {
+    		this.txtResult.setText("NESSUNA COMBINAZIONE");
+    		return;
+    	}
+    	grafo=model.getGrafo();
+    	this.txtResult.clear();
+    	for(DefaultWeightedEdge arco: risultato) {
+			this.txtResult.appendText(grafo.getEdgeSource(arco)+" "+grafo.getEdgeTarget(arco)+" "+grafo.getEdgeWeight(arco)+"\n");
+    	}
+    this.boxArco.getItems().addAll(risultato);
 
     }
 

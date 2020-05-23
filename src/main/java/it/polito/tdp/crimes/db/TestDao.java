@@ -9,7 +9,7 @@ public class TestDao {
 
 	public static void main(String[] args) {
 		EventsDao dao = new EventsDao();
-		Month mese=Month.MARCH;
+		Month mese=Month.FEBRUARY;
 		System.out.println(dao.getContatoreCrimini("menacing-felony-w-weap", "aggravated-assault", mese));
 	}
 
