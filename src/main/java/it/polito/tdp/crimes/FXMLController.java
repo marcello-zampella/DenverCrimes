@@ -59,7 +59,10 @@ public class FXMLController {
     	String partenza=grafo.getEdgeSource(arco);
     	String arrivo=grafo.getEdgeTarget(arco);
     	LinkedList<String> lista=model.getCamminoMassimo(partenza,arrivo);
-    	System.out.println(lista);
+    	this.txtResult.clear();
+    	for(int i=0; i<lista.size()-1;i++) {
+    		this.txtResult.appendText(lista.get(i)+" -> "+lista.get(i+1)+"\n");
+    	}
 
     }
     Graph<String, DefaultWeightedEdge> grafo;
